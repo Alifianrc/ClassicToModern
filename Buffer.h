@@ -1,12 +1,14 @@
 #pragma once
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include "Shader.h"
+
 
 class Buffer {
 private:
 	unsigned int* VAO;
 	unsigned int* VBO;
 	unsigned int* EBO;
+
+	int count;
 
 public:
 	Buffer() = default;
@@ -16,6 +18,8 @@ public:
 	void SetBufferData(int number, float* vertices, unsigned int* indices);
 
 	void Draw(int number, int mode, int count);
+
+	void DeleteBuffer();
 
 	//void Excecution
 };

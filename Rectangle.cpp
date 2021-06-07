@@ -7,7 +7,7 @@
 #include <cmath>
 #pragma once
 
-rectangle::rectangle(int X, int Y, int width, int height) {
+rectangle::rectangle(float X, float Y, float width, float height) {
 	x = X;
 	y = Y;
 
@@ -36,25 +36,32 @@ void rectangle::draw(){
 }
 
 void rectangle::UpdateVertices() {
-	// Vertex 1
+	// Vertex 0
 	vertices[0] = x;
-	vertices[1] = y;
+	vertices[1] = y - h;
 	vertices[2] = 0;
 
-	// Vertex 2
-	vertices[3] = (w * sx) * cos(angle);
-	vertices[4] = (w * sx) * sin(angle);
+	// Vertex 1
+	vertices[3] = x;
+	vertices[4] = y;
 	vertices[5] = 0;
 
-	// Vertex 3
-	vertices[6] = ((w * sx) * cos(angle)) + ((sy * h) * (-sin(angle)));
-	vertices[7] = ((w * sx) * sin(angle)) + ((sy * h) * cos(angle));
+	// Vertex 2
+	vertices[6] = x + w;
+	vertices[7] = y;
 	vertices[8] = 0;
 
-	// Vertex 4
-	vertices[9] = (sy * h) * (-sin(angle));
-	vertices[10] = (sy * h) * cos(angle);
+	// Vertex 3
+	vertices[9] = x + w;
+	vertices[10] = y - h;
 	vertices[11] = 0;
+
+	for (int i = 0; i < 12; i++) {
+		std::cout << vertices[i] << " ";
+		if ((i + 1) % 3 == 0) {
+			std::cout << "\n";
+		}
+	} std::cout << "\n\n";
 }
 void rectangle::UpdateIndices() {
 	// Indices 1
@@ -80,6 +87,7 @@ float rectangle::getH(){
 	return h;
 }
 
+/*
 void rectangle::translate(float tsx, float tsy) {
 	float batas_atas = ty + y + (sy*h);
 	float batas_bawah = ty + y;
@@ -95,3 +103,4 @@ void rectangle::translate(float tsx, float tsy) {
 	ty += tsy;
 	tx += tsx;
 }
+*/

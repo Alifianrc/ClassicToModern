@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+
 class rectangle :public object{
 	private:
 		//tinggi (h) dan lebar objek(w)
@@ -8,7 +9,7 @@ class rectangle :public object{
 
 	public:
 		//constructor persegi
-		rectangle(int X, int Y, int width, int height);
+		rectangle(float X, float Y, float width, float height);
 
 		//override dari fungsi draw
 		void draw();

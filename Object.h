@@ -1,9 +1,10 @@
 #pragma once
+
 class object{
 	protected:
 		//titik origin objek
-		int x;
-		int y;
+		float x;
+		float y;
 
 		// Vertices object
 		float* vertices;

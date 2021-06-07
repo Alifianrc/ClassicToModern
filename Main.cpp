@@ -1,16 +1,21 @@
 #include <iostream>
 #include <algorithm>
-#include <GL/glew.h>
-#include <GL/freeglut.h> 
-#include "Rectangle.h";
+//#include <GL/glew.h>
+//#include <GL/freeglut.h>
 #include "Shader.h"
+#include "Rectangle.h";
 #include "Buffer.h"
 
 using namespace std;
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow* window);
+
+// settings
+const unsigned int SCR_WIDTH = 700;
+const unsigned int SCR_HEIGHT = 700;
 //circle circ;
-rectangle rect1(50, 50, 10, 10);
-rectangle rect2(70, 70, 10, 10);
+
 
 //collision detection circle vs rectangle
 /*
@@ -20,6 +25,7 @@ bool collisionDetection(circle Circle, rectangle Rectangle) {
 	return (deltaX * deltaX + deltaY * deltaY) < (Circle.getR() * Circle.getR());
 }
 */
+/*
 void drawScene(void){
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -38,7 +44,7 @@ void drawScene(void){
 	ourBuffer.Draw(1, 0, 6);
 
 	//logic
-	/*
+
 	if (collisionDetection(circ, rect)) {
 		rect2.setColor(1, 0, 0);
 		glutPostRedisplay();
@@ -47,15 +53,16 @@ void drawScene(void){
 		rect2.setColor(0, 1, 0);
 		glutPostRedisplay();
 	}
-	*/
+	
 	//glFlush();
 }
+*/
 
 void setup(void){
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 }
 
-
+/*
 void resize(int w, int h){
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
@@ -120,7 +127,7 @@ void ScalKey(unsigned char key, int x, int y) {
 		break;
 	}
 }
-*/
+
 void RotateKey(unsigned char key, int x, int y) {
 	switch (key) {
 	case 27:
@@ -140,25 +147,81 @@ void RotateKey(unsigned char key, int x, int y) {
 		break;
 	}
 }
+*/
+int main(){
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-int main(int argc, char** argv){
-	glutInit(&argc, argv);
+	// glfw window creation
+	// --------------------
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Modern OpenGL", NULL, NULL);
+	if (window == NULL)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	glutInitContextVersion(4, 3);
-	glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	}
 
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-	glutInitWindowSize(500, 500);
-	glutInitWindowPosition(100, 100);
-	glutCreateWindow("test.cpp");
-	glutDisplayFunc(drawScene);
-	glutReshapeFunc(resize);
-	glutKeyboardFunc(RotateKey);
+	// build and compile our shader zprogram
+	// ------------------------------------
+	Shader ourShader("vertexShader.txt", "fragmentShader.txt");
 
-	glewExperimental = GL_TRUE;
-	glewInit();
+	rectangle rect1(0.5, 0.5, 0.5, 0.5);
+	//rectangle rect2(-0.5, -0.5, 0.2, 0.2);
 
-	setup();
+	Buffer ourBuffer;
+	ourBuffer.SetTotalBuffer(1);
+	ourBuffer.SetBufferData(0, rect1.GetVertices(), rect1.GetIndices());
+	//ourBuffer.SetBufferData(1, rect2.GetVertices(), rect2.GetIndices());
 
-	glutMainLoop();
+	while (!glfwWindowShouldClose(window))
+	{
+		processInput(window);
+
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// render container
+		ourShader.use();
+		ourBuffer.Draw(0, 0, 6);
+		//ourBuffer.Draw(1, 0, 6);
+
+		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+		// -------------------------------------------------------------------------------
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	ourBuffer.DeleteBuffer();
+
+	glfwTerminate();
+	return 0;
+}
+
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// ---------------------------------------------------------------------------------------------
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimensions; note that width and 
+	// height will be significantly larger than specified on retina displays.
+	glViewport(0, 0, width, height);
 }
